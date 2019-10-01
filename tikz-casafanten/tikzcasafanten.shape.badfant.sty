@@ -1,0 +1,25 @@
+\newcommand{\tikzcasafanten@badfant@paint}{
+	\tikzcasafanten@casafantshape@painttrident
+	\tikzcasafanten@casafantshape@paintlefthorn
+	\tikzcasafanten@casafantshape@paintskin
+	\tikzcasafanten@casafantshape@paintrighthorn
+}
+
+\newcommand{\tikzcasafanten@badfant@definecolors}{
+	\definecolor{skin}{RGB}{240,30,0}
+	\definecolor{skinbright}{RGB}{255,170,0}
+}
+
+
+\newcommand{\tikzcasafanten@badfant@definestyles}{
+	\if@tikzcasafanten@mirrored
+		\tikzset{
+			skin/.style= {color=\tikzcasafanten@skin!20!skinbright,shade border west to east=\tikzcasafanten@skin!80!skinbright to \tikzcasafanten@skin!20!skinbright,shade fill west to east=\tikzcasafanten@skin!80!skinbright to \tikzcasafanten@skin!20!skinbright},
+		}
+	\else
+		\tikzset{
+			skin/.style= {color=\tikzcasafanten@skin!20!skinbright,shade border west to east=\tikzcasafanten@skin!20!skinbright to \tikzcasafanten@skin!80!skinbright,shade fill west to east=\tikzcasafanten@skin!20!skinbright to \tikzcasafanten@skin!80!skinbright},
+		}
+	\fi
+}
+

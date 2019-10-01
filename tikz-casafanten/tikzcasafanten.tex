@@ -1,0 +1,64 @@
+\documentclass{ltxdoc}
+\usepackage{tikzcasafanten}
+
+
+\title{The \textsf{casafanten} package}
+%\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+
+\section{Introduction}
+
+
+%Characters:
+%  - casafant
+%  - casafantina
+%  - goodfant
+%  - badfant
+%  - sherlockfant
+%  - monoclefant
+
+%Items:
+%  - trident
+%  - horns
+%  - halo
+%  - wings
+%  - tophat
+%  - moustache
+%  - monocle
+%  - detectivehat
+
+%Options:
+%  - skin=color
+%  - mirrored
+%  - nonsaturated
+
+
+	\begin{tikzpicture}
+		\node[casafant,skin=purple,minimum height=3cm,tophat]{Casafant};
+		\node[badfant,minimum height=3cm,xshift=4cm]{Badfant};
+		\node[casafantina,horns,minimum height=2cm,mirrored,xshift=9cm]{};
+	\end{tikzpicture}
+	
+\vspace*{1cm}
+	
+	\begin{tikzpicture}
+		\node[goodfant,minimum height=2cm,mirrored]{};
+		\node[casafant,minimum height=3cm,nonsaturated,halo,trident,xshift=3.2cm]{};
+		\node[monoclefant,minimum height=2cm,mirrored,xshift=9cm]{};
+	\end{tikzpicture}
+
+
+\vspace*{1cm}
+	
+	\begin{tikzpicture}
+		\node[sherlockfant,minimum height=2cm]{};
+	\end{tikzpicture}
+
+	
+\end{document}
+

@@ -1,0 +1,895 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tikzcasafanten}[2019/09/22 v0.1 Casafanten nodes for Tikz]
+
+\RequirePackage{tikz}
+\RequirePackage{calc}
+\RequirePackage{etoolbox}
+
+\tikzset{
+    shade border west to east/.style args={#1 to #2}{
+        preaction={draw, thick, path fading=east, #1},
+        preaction={draw, thick, path fading=west, #2}
+    },
+    shade fill west to east/.style args={#1 to #2}{
+        left color=#1,
+        right color=#2
+    }
+}
+
+
+
+\definecolor{yellowHalo}{RGB}{251,224,103}
+\definecolor{darkyellowHalo}{RGB}{238,213,98}
+\definecolor{gray1}{RGB}{223,224,224}
+\definecolor{gray2}{RGB}{212,213,213}
+\definecolor{gray3}{RGB}{200,201,201}
+\definecolor{gray4}{RGB}{180,181,181}
+\definecolor{monoclefantskin}{RGB}{62,62,62} %?
+\definecolor{hatOutline}{RGB}{96,91,88}
+\definecolor{hatFill}{RGB}{46,44,42}
+\definecolor{beardFill}{RGB}{137,136,136}
+\definecolor{monocleFill}{RGB}{215,215,215}
+\definecolor{rightHornFill}{RGB}{240,56,0}
+\definecolor{leftHornFill}{RGB}{255,100,26}
+\definecolor{sherlockfantSkin}{RGB}{2,92,101}
+\definecolor{hatFill1}{RGB}{117,112,107}
+\definecolor{hatFill2}{RGB}{96,91,88}
+\definecolor{hatFill3}{RGB}{140,136,132}
+
+\newif\if@tikzcasafanten@nonsaturated\@tikzcasafanten@nonsaturatedfalse
+\DeclareOption{nonsaturated}{
+  \@tikzcasafanten@nonsaturatedtrue
+}
+
+\ProcessOptions\relax
+\usepgflibrary{intersections}
+\usetikzlibrary{decorations.markings,decorations.pathmorphing,calc,positioning,arrows.meta,fadings,shadows}
+
+\newif\if@tikzcasafanten@mirrored
+\pgfkeys{/tikz/mirrored/.is if=@tikzcasafanten@mirrored}
+%TODO
+\newif\if@tikzcasafanten@trident
+\pgfkeys{/tikz/trident/.is if=@tikzcasafanten@trident}
+\newif\if@tikzcasafanten@halo
+\pgfkeys{/tikz/halo/.is if=@tikzcasafanten@halo}
+\newif\if@tikzcasafanten@wings
+\pgfkeys{/tikz/wings/.is if=@tikzcasafanten@wings}
+\newif\if@tikzcasafanten@horns
+\pgfkeys{/tikz/horns/.is if=@tikzcasafanten@horns}
+\newif\if@tikzcasafanten@tophat
+\pgfkeys{/tikz/tophat/.is if=@tikzcasafanten@tophat}
+\newif\if@tikzcasafanten@moustache
+\pgfkeys{/tikz/moustache/.is if=@tikzcasafanten@moustache}
+\newif\if@tikzcasafanten@monocle
+\pgfkeys{/tikz/monocle/.is if=@tikzcasafanten@monocle}
+\newif\if@tikzcasafanten@detectivehat
+\pgfkeys{/tikz/detectivehat/.is if=@tikzcasafanten@detectivehat}
+
+
+\pgfkeys{/tikz/nonsaturated/.is if=@tikzcasafanten@nonsaturated}
+
+
+\newcommand{\tikzcasafanten@addcolorkey}[1]{
+	\expandafter\def\csname tikzcasafanten@#1\endcsname{#1}
+	\pgfkeys{/tikz/#1/.code=\expandafter\def\csname tikzcasafanten@#1\endcsname{##1}}
+}
+
+\newcommand{\tikzcasafanten@addtextkey}[2]{
+	\expandafter\def\csname tikzcasafanten@#1\endcsname{#2}
+	\pgfkeys{/tikz/#1/.code=\expandafter\def\csname tikzcasafanten@#1\endcsname{##1}}
+}
+
+
+
+\tikzcasafanten@addcolorkey{skin} %casafant color
+\tikzcasafanten@addcolorkey{tridentshape}
+
+
+
+\pgfdeclareshape{casafantshape}{
+	\saveddimen{\scalingfactor}{
+		\setlength{\pgf@xa}{\pgfshapeminwidth}
+		\setlength{\pgf@xb}{9.075pt}
+		\ifdim\pgf@xa<\pgf@xb
+			\pgfsetshapeminwidth{9.075pt}
+		\fi
+		\setlength{\pgf@xa}{\pgfshapeminheight}
+		\setlength{\pgf@xb}{0.5cm}
+		\ifdim\pgf@xa<\pgf@xb
+			\pgfsetshapeminheight{0.5cm}
+		\fi
+		\setlength{\pgf@xa}{1pt*\ratio{\pgfshapeminwidth}{9.075pt}}
+		\setlength{\pgf@xb}{1pt*\ratio{\pgfshapeminheight}{12.1pt}}
+		\ifdim\pgf@xa<\pgf@xb
+			\setlength{\pgf@x}{1pt*\ratio{\pgfshapeminheight}{12.1pt}}
+		\else
+			\setlength{\pgf@x}{1pt*\ratio{\pgfshapeminwidth}{9.075pt}}
+		\fi
+	}
+
+	\saveddimen{\width}{
+		\pgf@x=\wd\pgfnodeparttextbox
+	}
+	
+	\saveddimen{\height}{
+		\pgf@x=\ht\pgfnodeparttextbox
+	}
+	
+	\saveddimen{\depth}{
+		\pgf@x=\dp\pgfnodeparttextbox
+	}
+	
+	\savedanchor{\mouth}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-10.1}{-4}
+		\else
+			\pgfpoint{10.4}{-4}
+		\fi
+	}
+	\savedanchor{\northwest}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-13.1}{2.0}
+		\else
+			\pgfpoint{-0.3}{2.0}
+		\fi
+	}
+	\savedanchor{\north}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-6.0}{2.0}
+		\else
+			\pgfpoint{6.4}{2.0}
+		\fi
+	}
+	\savedanchor{\northeast}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{0.7}{2.0}
+		\else
+			\pgfpoint{13.4}{2.0}
+		\fi
+	}
+	\savedanchor{\east}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{0.7}{-3.6}
+		\else
+			\pgfpoint{13.4}{-3.6}
+		\fi
+	}
+	\savedanchor{\southeast}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{0.7}{-9.0}
+		\else
+			\pgfpoint{13.4}{-9.0}
+		\fi
+	}
+	\savedanchor{\south}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-6.0}{-9.0}
+		\else
+			\pgfpoint{6.4}{-9.0}
+		\fi
+	}
+	\savedanchor{\southwest}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-13.1}{-9.0}
+		\else
+			\pgfpoint{-0.3}{-9.0}
+		\fi
+	}
+	\savedanchor{\west}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-13.1}{-3.6}
+		\else
+			\pgfpoint{-0.3}{-3.6}
+		\fi
+	}
+	\savedanchor{\center}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{-6.0}{-3.6}
+		\else
+			\pgfpoint{6.4}{-3.6}
+		\fi
+	}
+
+	\anchor{mouth}{
+		\pgfpointscale{\scalingfactor}{\mouth}
+	}
+	\anchor{north west}{
+		\pgfpointscale{\scalingfactor}{\northwest}
+	}
+	\anchor{north}{
+		\pgfpointscale{\scalingfactor}{\north}
+	}
+	\anchor{north east}{
+		\pgfpointscale{\scalingfactor}{\northeast}
+	}
+	\anchor{east}{
+		\pgfpointscale{\scalingfactor}{\east}
+	}
+	\anchor{south east}{
+		\pgfpointscale{\scalingfactor}{\southeast}
+	}
+	\anchor{south}{
+		\pgfpointscale{\scalingfactor}{\south}
+	}
+	\anchor{south west}{
+		\pgfpointscale{\scalingfactor}{\southwest}
+	}
+	\anchor{west}{
+		\pgfpointscale{\scalingfactor}{\west}
+	}
+	\anchor{center}{
+		\pgfpointscale{\scalingfactor}{\center}
+	}
+	\anchor{text}{
+		\if@tikzcasafanten@mirrored
+			\pgfpoint{\scalingfactor*-6.0-0.5*\width}{\scalingfactor*-10.3-\depth-\height}
+		\else
+			\pgfpoint{\scalingfactor*6.4-0.5*\width}{\scalingfactor*-10.3-\depth-\height}
+		\fi
+	}
+	\anchor{base}{%TODO
+		\pgfpoint{\scalingfactor*6.4}{\scalingfactor*-12.3-\depth-\height}
+	}
+	\anchor{base west}{%TODO
+		\pgfpoint{\scalingfactor*-0.3}{\scalingfactor*-12.3-\depth-\height}
+	}
+	\anchor{base east}{%TODO
+		\pgfpoint{\scalingfactor*13.4}{\scalingfactor*-12.3-\depth-\height}
+	}
+	\anchor{mid}{%TODO
+		\pgfpoint{\scalingfactor*6.4}{\scalingfactor*-12.0-\depth-\height+.5ex}
+	}
+	\anchor{mid west}{%TODO
+		\pgfpoint{\scalingfactor*-0.3}{\scalingfactor*-12.0-\depth-\height+.5ex}
+	}
+	\anchor{mid east}{%TODO
+		\pgfpoint{\scalingfactor*13.4}{\scalingfactor*-12.0-\depth-\height+.5ex}
+	}
+
+	\anchorborder{%TODO
+		\@tempdima=\pgf@x
+		\@tempdimb=\pgf@y
+		\pgftransformshift{\pgf<fmpoint{\scalingfactor*-0.1625}{\scalingfactor*0.4pt}}
+		\pgfpointborderellipse{\pgfpoint{\@tempdima}{\@tempdimb}}{\pgfpoint{\scalingfactor*5.9pt}{\scalingfactor*6.9pt}}
+	}
+	
+	\beforebackgroundpath{	
+		\pgftransformscale{\scalingfactor}
+		\if@tikzcasafanten@mirrored
+			\pgftransformxscale{-1}
+			\pgftransformxshift{-0.325}
+		\fi
+		\pgftransformshift{\pgfpoint{-0.3}{3.3}}
+		\tikzcasafanten@definecommoncolors
+		\tikzcasafanten@definecommonstyles
+		\tikzcasafanten@casafantshape@paintskin
+		\if@tikzcasafanten@trident
+			\tikzcasafanten@casafantshape@trident
+		\fi
+		\if@tikzcasafanten@halo
+			\tikzcasafanten@casafantshape@halo
+		\fi
+		\if@tikzcasafanten@wings
+			\tikzcasafanten@casafantshape@wings
+		\fi
+		\if@tikzcasafanten@horns
+			\tikzcasafanten@casafantshape@horns
+		\fi
+		\if@tikzcasafanten@tophat
+			\tikzcasafanten@casafantshape@tophat
+		\fi
+		\if@tikzcasafanten@monocle
+			\tikzcasafanten@casafantshape@monocle
+		\fi
+		\if@tikzcasafanten@moustache
+			\tikzcasafanten@casafantshape@moustache
+		\fi
+	}
+}
+
+\newcommand{\tikzcasafanten@definecommonstyles}{
+	\if@tikzcasafanten@nonsaturated
+		\tikzset{
+			skin/.style= {draw=\tikzcasafanten@skin!80,top color=\tikzcasafanten@skin!40, bottom color=\tikzcasafanten@skin!80,shading angle=45},
+			tridentshape/.style= {color=\tikzcasafanten@tridentshape,fill=\tikzcasafanten@tridentshape},
+		}
+	\else
+		\tikzset{
+			skin/.style= {draw=\tikzcasafanten@skin,fill=\tikzcasafanten@skin},
+			tridentshape/.style= {color=\tikzcasafanten@tridentshape,fill=\tikzcasafanten@tridentshape},
+		}
+	\fi
+}
+
+
+\newcommand{\tikzcasafanten@definecommoncolors}{
+	\definecolor{skin}{RGB}{2,92,101}
+	\definecolor{tridentshape}{RGB}{173,54,4}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintskin}{
+	\begin{scope}
+		\pgftransformscale{0.9}
+		\fill[skin,y=-0.03pt, x=0.03pt]
+		(488.9090,418.3920) .. controls
+		          (454.0690,391.1730) and (485.6430,324.7600) .. (485.6430,324.7600) .. controls
+		          (548.7900,163.6260) and (439.5350,82.4530) .. (420.8550,71.8730) .. controls
+		          (382.8220,50.3320) and (292.3580,29.2250) .. (246.6890,87.1920) .. controls
+		          (233.7730,103.5860) and (238.0900,123.9460) .. (244.0350,138.1760) .. controls
+		          (259.3370,174.7940) and (300.4710,207.7200) .. (335.7280,211.5640) .. controls
+		          (345.7820,212.6870) and (353.1050,210.3820) .. (358.0640,204.6060) .. controls
+		          (373.8250,186.2590) and (365.5150,137.9880) .. (360.9730,120.9340) .. controls
+		          (359.7400,116.2900) and (362.5040,111.5180) .. (367.1570,110.2760) .. controls
+		          (368.4980,109.9200) and (369.8210,109.9760) .. (371.0950,110.2350) .. controls
+		          (374.2370,110.8720) and (376.9370,113.1440) .. (377.8150,116.4600) .. controls
+		          (379.7200,123.6390) and (395.7710,187.4580) .. (371.2830,215.9610) .. controls
+		          (365.8820,222.2470) and (356.2790,229.2470) .. (340.3130,229.2470) .. controls
+		          (338.2630,229.2470) and (336.1030,229.1280) .. (333.8400,228.8810) .. controls
+		          (292.2470,224.3390) and (245.7450,187.4490) .. (227.9600,144.8860) .. controls
+		          (223.4850,134.1780) and (221.2530,123.8210) .. (221.0120,114.0510) .. controls
+		          (121.2840,114.0510) and (7.4370,169.6470) .. (0.0210,269.6480) .. controls
+		          (-0.2170,272.8560) and (1.7560,275.8150) .. (4.8100,276.8270) .. controls
+		          (7.8640,277.8480) and (11.2230,276.6580) .. (12.9500,273.9450) .. controls
+		          (19.0740,264.3290) and (26.7000,253.9180) .. (34.2750,247.3600) .. controls
+		          (35.3620,263.1090) and (40.1460,278.1560) .. (48.4110,291.8920) .. controls
+		          (64.9630,319.4000) and (73.8010,350.9900) .. (73.8010,383.0900) --
+		          (73.9590,442.3430) .. controls (74.8020,449.6040) and (91.9540,455.4080) ..
+		          (113.1400,455.4080) .. controls (134.3340,455.4080) and (151.4860,449.6040) ..
+		          (152.3300,442.3430) -- (152.4880,403.8880) .. controls (152.4880,393.7920) and
+		          (156.6980,384.1460) .. (164.0980,377.2720) .. controls (171.4980,370.3990) and
+		          (181.4140,367.6440) .. (191.5110,367.6440) .. controls (197.7740,367.6440) and
+		          (210.5900,367.6530) .. (211.3390,367.6440) .. controls (221.0270,367.5430) and
+		          (230.3580,371.9810) .. (237.2380,378.8030) .. controls (244.1280,385.6250) and
+		          (247.9990,394.9130) .. (247.9990,404.6020) -- (248.1570,442.3420) .. controls
+		          (249.0000,449.6030) and (266.1510,455.4070) .. (287.3380,455.4070) .. controls
+		          (308.5320,455.4070) and (325.6840,449.6030) .. (326.5280,442.3420) --
+		          (326.6860,409.1270) .. controls (326.6860,310.5280) and (398.9400,266.5290) ..
+		          (407.5250,261.3130) .. controls (450.1310,235.4270) and (431.2050,313.8700) ..
+		          (431.2050,313.8700) .. controls (402.8980,402.0580) and (468.2220,442.3420) ..
+		          (468.2220,442.3420) -- (468.5150,442.0030) .. controls (468.7190,442.2110) and
+		          (468.7770,442.5470) .. (469.0130,442.7250) .. controls (473.1970,445.8800) and
+		          (480.8120,442.8530) .. (486.0080,435.9460) .. controls (490.8000,429.6060) and
+		          (491.6760,422.3820) .. (488.5770,418.7750) -- cycle;
+\end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@painthalo}{
+\begin{scope}
+	\pgftransformshift{\pgfpoint{1.6pt}{-5.5pt}}
+	\pgftransformscale{0.30}
+    \fill[halo,color=yellowHalo,y=0.1pt, x=0.1pt] (256.0020,207.9150) .. controls (221.9640,207.9150) and
+      (189.7190,203.4040) .. (165.2070,195.2150) .. controls (126.1410,182.1620) and
+      (117.9410,163.4940) .. (117.9410,150.1330) .. controls (117.9410,136.7720) and
+      (126.1410,118.1040) .. (165.2070,105.0510) .. controls (189.7190,96.8620) and
+      (221.9640,92.3510) .. (256.0020,92.3510) .. controls (290.0400,92.3510) and
+      (322.2850,96.8620) .. (346.7970,105.0510) .. controls (385.8620,118.1040) and
+      (394.0630,136.7720) .. (394.0630,150.1330) .. controls (394.0630,163.4940) and
+      (385.8630,182.1620) .. (346.7970,195.2150) .. controls (322.2850,203.4040) and
+      (290.0400,207.9150) .. (256.0020,207.9150) -- cycle(153.5840,150.1330) ..
+      controls (156.1050,152.8960) and (164.1020,158.6340) .. (182.1570,163.8360) ..
+      controls (202.4770,169.6900) and (228.7030,172.9150) .. (256.0020,172.9150) ..
+      controls (283.3010,172.9150) and (309.5260,169.6900) .. (329.8470,163.8360) ..
+      controls (347.9030,158.6340) and (355.9000,152.8960) .. (358.4200,150.1330) ..
+      controls (355.8990,147.3700) and (347.9020,141.6320) .. (329.8470,136.4300) ..
+      controls (309.5270,130.5760) and (283.3010,127.3510) .. (256.0020,127.3510) ..
+      controls (228.7030,127.3510) and (202.4780,130.5760) .. (182.1570,136.4300) ..
+      controls (164.1020,141.6320) and (156.1040,147.3700) .. (153.5840,150.1330) --
+      cycle;
+	\pgftransformshift{\pgfpoint{0pt}{30pt}}
+    \fill[halo,color=darkyellowHalo,y=-0.1pt, x=0.1pt] (137.1740,153.9180) .. controls (126.4030,136.4110) and
+      (144.3940,117.9670) .. (160.9770,106.5370) .. controls (125.5540,119.4920) and
+      (117.9410,137.2700) .. (117.9410,150.1340) .. controls (117.9410,163.4950) and
+      (126.1410,182.1630) .. (165.2070,195.2160) .. controls (189.7190,203.4050) and
+      (221.9640,207.9160) .. (256.0020,207.9160) .. controls (290.0400,207.9160) and
+      (322.2850,203.4050) .. (346.7970,195.2160) .. controls (383.3610,182.9990) and
+      (392.8840,165.8640) .. (393.9550,152.7640) .. controls (287.2810,224.4260) and
+      (152.3700,178.6170) .. (137.1740,153.9180) -- cycle;
+\end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@painttrident}{
+\begin{scope}
+%	\pgftransformrotate{-45}
+	\pgftransformshift{\pgfpoint{11.5pt}{-5.5pt}}
+	\pgftransformscale{0.45}
+	\draw[tridentshape,y=-0.03pt, x=0.03pt]
+      (485.0540,149.1710) .. controls (483.2390,147.3690) and
+      (480.5190,146.8430) .. (478.1570,147.8310) -- (370.0000,193.4430) .. controls
+      (367.6390,194.4480) and (366.1100,196.7950) .. (366.1720,199.3670) .. controls
+      (366.2220,201.9480) and (367.8440,204.2340) .. (370.2580,205.1280) --
+      (387.9070,211.6730) -- (361.8150,237.7680) .. controls (346.7640,252.8130) and
+      (326.7670,261.0980) .. (305.4730,261.0980) .. controls (292.6770,261.0980) and
+      (280.5110,257.7780) .. (269.4550,252.1310) -- (386.6650,134.9040) --
+      (393.1940,152.5230) .. controls (394.0970,154.9500) and (396.3670,156.5630) ..
+      (398.9550,156.6260) .. controls (401.5220,156.6710) and (403.8650,155.1550) ..
+      (404.8710,152.7790) -- (450.4980,44.6220) .. controls (451.4910,42.2600) and
+      (450.9660,39.5430) .. (449.1430,37.7410) .. controls (447.3440,35.9260) and
+      (444.6240,35.3960) .. (442.2630,36.3870) -- (334.1070,82.0150) .. controls
+      (331.7280,83.0200) and (330.2150,85.3680) .. (330.2570,87.9380) .. controls
+      (330.3270,90.5210) and (331.9370,92.7890) .. (334.3620,93.6990) --
+      (352.0010,100.2390) -- (234.8230,217.4170) .. controls (219.6280,187.5100) and
+      (224.1630,150.0810) .. (249.1370,125.0900) -- (275.2320,98.9980) --
+      (281.7550,116.6160) .. controls (282.6670,119.0430) and (284.9370,120.6520) ..
+      (287.5250,120.7150) .. controls (290.0930,120.7640) and (292.4330,119.2490) ..
+      (293.4400,116.8720) -- (339.0570,8.7290) .. controls (340.0430,6.3660) and
+      (339.5190,3.6550) .. (337.7130,1.8320) .. controls (335.8950,0.0310) and
+      (333.1840,-0.4970) .. (330.8210,0.4930) -- (222.6590,46.1060) .. controls
+      (220.2970,47.1110) and (218.7660,49.4570) .. (218.8300,52.0270) .. controls
+      (218.8790,54.6110) and (220.5090,56.8930) .. (222.9140,57.7870) --
+      (240.5640,64.3330) -- (214.4730,90.4260) .. controls (170.2340,134.6650) and
+      (165.0480,203.3560) .. (198.8480,253.3910) -- (7.1890,445.0490) .. controls
+      (-2.3880,454.6230) and (-2.3880,470.1380) .. (7.1890,479.7100) .. controls
+      (11.9760,484.4990) and (18.2500,486.8930) .. (24.5210,486.8930) .. controls
+      (30.7940,486.8930) and (37.0660,484.5000) .. (41.8530,479.7100) --
+      (233.5110,288.0540) .. controls (255.1730,302.6880) and (280.3060,310.0620) ..
+      (305.4730,310.0620) .. controls (338.4310,310.0620) and (371.3880,297.5170) ..
+      (396.4780,272.4280) -- (422.5700,246.3340) -- (429.1000,263.9530) .. controls
+      (430.0110,266.3800) and (432.2730,267.9940) .. (434.8590,268.0550) .. controls
+      (437.4280,268.1060) and (439.7760,266.5860) .. (440.7830,264.2090) --
+      (486.3920,156.0660) .. controls (487.3850,153.7040) and (486.8520,150.9920) ..
+      (485.0540,149.1710) -- cycle;
+  \end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintrightwing}{
+\begin{scope}
+	\pgftransformshift{\pgfpoint{16.55pt}{-3.35pt}}
+	\pgftransformrotate{-40}
+	\pgftransformscale{0.25}
+    \fill[wings,color=black,y=-0.1pt, x=-0.1pt,opacity=0.1] (509.6400,334.7380) .. controls (507.7720,329.6060) and
+      (504.9360,325.1090) .. (501.4170,321.3680) .. controls (510.9620,310.9880) and
+      (514.5370,295.7810) .. (509.3810,281.6150) .. controls (506.4450,273.5490) and
+      (501.1200,267.0470) .. (494.5000,262.6020) .. controls (503.3890,252.2590) and
+      (506.5910,237.5530) .. (501.5940,223.8250) .. controls (494.2280,203.5880) and
+      (471.8530,193.1550) .. (451.6160,200.5200) .. controls (444.6600,203.0520) and
+      (438.8620,207.3580) .. (434.5470,212.7400) .. controls (414.9370,238.2780) and
+      (364.1150,282.1210) .. (309.7090,301.9230) .. controls (278.2170,313.3850) and
+      (261.9800,348.2060) .. (273.4420,379.6980) .. controls (281.4210,401.6200) and
+      (300.7230,416.1370) .. (322.3390,419.0760) -- (322.3400,419.0860) .. controls
+      (322.7000,419.1330) and (323.0750,419.1730) .. (323.4460,419.2140) .. controls
+      (325.4530,419.4490) and (327.4780,419.5860) .. (329.5150,419.6180) .. controls
+      (329.6670,419.6220) and (329.8190,419.6270) .. (329.9720,419.6300) .. controls
+      (330.1430,419.6310) and (330.3130,419.6370) .. (330.4840,419.6370) .. controls
+      (371.0030,420.3300) and (454.0910,396.4490) .. (486.3340,384.7140) .. controls
+      (506.5710,377.3500) and (517.0050,354.9740) .. (509.6400,334.7380) -- cycle;
+\end{scope}
+\begin{scope}
+	\pgftransformshift{\pgfpoint{16.55pt}{-3.25pt}}
+	\pgftransformrotate{-40}
+	\pgftransformscale{0.25}
+    \fill[wings,color=black,y=-0.1pt, x=-0.1pt,opacity=0.1] (509.6400,334.7380) .. controls (507.7720,329.6060) and
+      (504.9360,325.1090) .. (501.4170,321.3680) .. controls (510.9620,310.9880) and
+      (514.5370,295.7810) .. (509.3810,281.6150) .. controls (506.4450,273.5490) and
+      (501.1200,267.0470) .. (494.5000,262.6020) .. controls (503.3890,252.2590) and
+      (506.5910,237.5530) .. (501.5940,223.8250) .. controls (494.2280,203.5880) and
+      (471.8530,193.1550) .. (451.6160,200.5200) .. controls (444.6600,203.0520) and
+      (438.8620,207.3580) .. (434.5470,212.7400) .. controls (414.9370,238.2780) and
+      (364.1150,282.1210) .. (309.7090,301.9230) .. controls (278.2170,313.3850) and
+      (261.9800,348.2060) .. (273.4420,379.6980) .. controls (281.4210,401.6200) and
+      (300.7230,416.1370) .. (322.3390,419.0760) -- (322.3400,419.0860) .. controls
+      (322.7000,419.1330) and (323.0750,419.1730) .. (323.4460,419.2140) .. controls
+      (325.4530,419.4490) and (327.4780,419.5860) .. (329.5150,419.6180) .. controls
+      (329.6670,419.6220) and (329.8190,419.6270) .. (329.9720,419.6300) .. controls
+      (330.1430,419.6310) and (330.3130,419.6370) .. (330.4840,419.6370) .. controls
+      (371.0030,420.3300) and (454.0910,396.4490) .. (486.3340,384.7140) .. controls
+      (506.5710,377.3500) and (517.0050,354.9740) .. (509.6400,334.7380) -- cycle;
+\end{scope}
+\begin{scope}
+	\pgftransformshift{\pgfpoint{16.5pt}{-3.3pt}}
+	\pgftransformrotate{-40}
+	\pgftransformscale{0.25}
+%    \fill[wings,color=gray1,y=-0.1pt, x=-0.1pt,drop shadow={opacity=0.2,shadow yshift=-0.5pt,shadow xshift=0.5pt},drop shadow={opacity=0.2,shadow yshift=0.5pt,shadow xshift=0.5pt}] (509.6400,334.7380) .. controls (507.7720,329.6060) and
+    \fill[wings,color=gray1,y=-0.1pt, x=-0.1pt] (509.6400,334.7380) .. controls (507.7720,329.6060) and
+      (504.9360,325.1090) .. (501.4170,321.3680) .. controls (510.9620,310.9880) and
+      (514.5370,295.7810) .. (509.3810,281.6150) .. controls (506.4450,273.5490) and
+      (501.1200,267.0470) .. (494.5000,262.6020) .. controls (503.3890,252.2590) and
+      (506.5910,237.5530) .. (501.5940,223.8250) .. controls (494.2280,203.5880) and
+      (471.8530,193.1550) .. (451.6160,200.5200) .. controls (444.6600,203.0520) and
+      (438.8620,207.3580) .. (434.5470,212.7400) .. controls (414.9370,238.2780) and
+      (364.1150,282.1210) .. (309.7090,301.9230) .. controls (278.2170,313.3850) and
+      (261.9800,348.2060) .. (273.4420,379.6980) .. controls (281.4210,401.6200) and
+      (300.7230,416.1370) .. (322.3390,419.0760) -- (322.3400,419.0860) .. controls
+      (322.7000,419.1330) and (323.0750,419.1730) .. (323.4460,419.2140) .. controls
+      (325.4530,419.4490) and (327.4780,419.5860) .. (329.5150,419.6180) .. controls
+      (329.6670,419.6220) and (329.8190,419.6270) .. (329.9720,419.6300) .. controls
+      (330.1430,419.6310) and (330.3130,419.6370) .. (330.4840,419.6370) .. controls
+      (371.0030,420.3300) and (454.0910,396.4490) .. (486.3340,384.7140) .. controls
+      (506.5710,377.3500) and (517.0050,354.9740) .. (509.6400,334.7380) -- cycle;
+
+    \fill[wings,color=gray2,y=-0.1pt, x=-0.1pt] (323.6900,296.2780) .. controls (319.0680,298.3170) and
+      (314.4040,300.2150) .. (309.7110,301.9230) .. controls (278.2190,313.3850) and
+      (261.9820,348.2060) .. (273.4440,379.6980) .. controls (281.4230,401.6200) and
+      (300.7250,416.1370) .. (322.3410,419.0760) -- (322.3420,419.0860) .. controls
+      (322.7020,419.1330) and (323.0770,419.1730) .. (323.4480,419.2140) .. controls
+      (325.4550,419.4490) and (327.4800,419.5860) .. (329.5170,419.6180) .. controls
+      (329.6690,419.6220) and (329.8210,419.6270) .. (329.9740,419.6300) .. controls
+      (330.1440,419.6310) and (330.3150,419.6370) .. (330.4860,419.6370) .. controls
+      (347.8080,419.9330) and (372.9100,415.7370) .. (398.4930,409.9200) .. controls
+      (308.7700,406.2350) and (315.3560,325.1380) .. (323.6900,296.2780) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (384.8700,344.2190) .. controls (383.4530,340.3270) and
+      (379.1500,338.3230) .. (375.2570,339.7370) .. controls (371.3640,341.1540) and
+      (369.3580,345.4580) .. (370.7750,349.3500) .. controls (375.6370,362.7090) and
+      (375.0060,377.1630) .. (368.9990,390.0480) .. controls (362.9900,402.9330) and
+      (352.3240,412.7070) .. (338.9640,417.5700) .. controls (336.5710,418.4410) and
+      (334.1410,419.1290) .. (331.6930,419.6480) .. controls (342.0130,419.7020) and
+      (354.9250,418.2490) .. (368.9830,415.8560) .. controls (374.5520,410.2890) and
+      (379.1670,403.7360) .. (382.5940,396.3870) .. controls (390.2940,379.8700) and
+      (391.1030,361.3440) .. (384.8700,344.2190) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (403.3490,328.3470) .. controls (400.2850,328.3470) and
+      (397.4090,326.4550) .. (396.3000,323.4110) .. controls (394.8830,319.5180) and
+      (396.8910,315.2150) .. (400.7820,313.7980) .. controls (405.9340,311.9230) and
+      (408.6000,306.2060) .. (406.7250,301.0550) .. controls (405.8170,298.5590) and
+      (403.9910,296.5660) .. (401.5830,295.4440) .. controls (399.1760,294.3220) and
+      (396.4760,294.2020) .. (393.9800,295.1120) .. controls (390.0860,296.5260) and
+      (385.7830,294.5200) .. (384.3670,290.6300) .. controls (382.9500,286.7370) and
+      (384.9580,282.4340) .. (388.8490,281.0170) .. controls (395.1120,278.7390) and
+      (401.8840,279.0350) .. (407.9220,281.8500) .. controls (413.9600,284.6660) and
+      (418.5400,289.6640) .. (420.8190,295.9250) .. controls (423.0970,302.1860) and
+      (422.8020,308.9590) .. (419.9860,314.9970) .. controls (417.1700,321.0350) and
+      (412.1720,325.6150) .. (405.9110,327.8940) .. controls (405.0660,328.2000) and
+      (404.2000,328.3470) .. (403.3490,328.3470) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (450.8820,365.1070) .. controls (447.8180,365.1070) and
+      (444.9420,363.2150) .. (443.8330,360.1700) .. controls (442.4160,356.2780) and
+      (444.4240,351.9740) .. (448.3150,350.5570) .. controls (453.4670,348.6820) and
+      (456.1320,342.9650) .. (454.2570,337.8130) .. controls (453.3490,335.3170) and
+      (451.5240,333.3250) .. (449.1160,332.2030) .. controls (446.7090,331.0810) and
+      (444.0090,330.9610) .. (441.5140,331.8710) .. controls (437.6200,333.2840) and
+      (433.3170,331.2790) .. (431.9010,327.3890) .. controls (430.4840,323.4960) and
+      (432.4920,319.1930) .. (436.3830,317.7760) .. controls (442.6460,315.4980) and
+      (449.4180,315.7940) .. (455.4560,318.6090) .. controls (461.4940,321.4250) and
+      (466.0740,326.4240) .. (468.3530,332.6840) .. controls (473.0570,345.6080) and
+      (466.3700,359.9500) .. (453.4460,364.6540) .. controls (452.6000,364.9610) and
+      (451.7330,365.1070) .. (450.8820,365.1070) -- cycle;
+\end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintleftwing}{
+\begin{scope}
+	\pgftransformshift{\pgfpoint{16.4pt}{-6.6pt}}
+	\pgftransformrotate{-58}
+	\pgftransformscale{0.25}
+    \fill[wings,color=gray1,y=-0.1pt, x=-0.1pt] (509.6400,334.7380) .. controls (507.7720,329.6060) and
+      (504.9360,325.1090) .. (501.4170,321.3680) .. controls (510.9620,310.9880) and
+      (514.5370,295.7810) .. (509.3810,281.6150) .. controls (506.4450,273.5490) and
+      (501.1200,267.0470) .. (494.5000,262.6020) .. controls (503.3890,252.2590) and
+      (506.5910,237.5530) .. (501.5940,223.8250) .. controls (494.2280,203.5880) and
+      (471.8530,193.1550) .. (451.6160,200.5200) .. controls (444.6600,203.0520) and
+      (438.8620,207.3580) .. (434.5470,212.7400) .. controls (414.9370,238.2780) and
+      (364.1150,282.1210) .. (309.7090,301.9230) .. controls (278.2170,313.3850) and
+      (261.9800,348.2060) .. (273.4420,379.6980) .. controls (281.4210,401.6200) and
+      (300.7230,416.1370) .. (322.3390,419.0760) -- (322.3400,419.0860) .. controls
+      (322.7000,419.1330) and (323.0750,419.1730) .. (323.4460,419.2140) .. controls
+      (325.4530,419.4490) and (327.4780,419.5860) .. (329.5150,419.6180) .. controls
+      (329.6670,419.6220) and (329.8190,419.6270) .. (329.9720,419.6300) .. controls
+      (330.1430,419.6310) and (330.3130,419.6370) .. (330.4840,419.6370) .. controls
+      (371.0030,420.3300) and (454.0910,396.4490) .. (486.3340,384.7140) .. controls
+      (506.5710,377.3500) and (517.0050,354.9740) .. (509.6400,334.7380) -- cycle;
+    \fill[wings,color=gray2,y=-0.1pt, x=-0.1pt] (323.6900,296.2780) .. controls (319.0680,298.3170) and
+      (314.4040,300.2150) .. (309.7110,301.9230) .. controls (278.2190,313.3850) and
+      (261.9820,348.2060) .. (273.4440,379.6980) .. controls (281.4230,401.6200) and
+      (300.7250,416.1370) .. (322.3410,419.0760) -- (322.3420,419.0860) .. controls
+      (322.7020,419.1330) and (323.0770,419.1730) .. (323.4480,419.2140) .. controls
+      (325.4550,419.4490) and (327.4800,419.5860) .. (329.5170,419.6180) .. controls
+      (329.6690,419.6220) and (329.8210,419.6270) .. (329.9740,419.6300) .. controls
+      (330.1440,419.6310) and (330.3150,419.6370) .. (330.4860,419.6370) .. controls
+      (347.8080,419.9330) and (372.9100,415.7370) .. (398.4930,409.9200) .. controls
+      (308.7700,406.2350) and (315.3560,325.1380) .. (323.6900,296.2780) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (384.8700,344.2190) .. controls (383.4530,340.3270) and
+      (379.1500,338.3230) .. (375.2570,339.7370) .. controls (371.3640,341.1540) and
+      (369.3580,345.4580) .. (370.7750,349.3500) .. controls (375.6370,362.7090) and
+      (375.0060,377.1630) .. (368.9990,390.0480) .. controls (362.9900,402.9330) and
+      (352.3240,412.7070) .. (338.9640,417.5700) .. controls (336.5710,418.4410) and
+      (334.1410,419.1290) .. (331.6930,419.6480) .. controls (342.0130,419.7020) and
+      (354.9250,418.2490) .. (368.9830,415.8560) .. controls (374.5520,410.2890) and
+      (379.1670,403.7360) .. (382.5940,396.3870) .. controls (390.2940,379.8700) and
+      (391.1030,361.3440) .. (384.8700,344.2190) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (403.3490,328.3470) .. controls (400.2850,328.3470) and
+      (397.4090,326.4550) .. (396.3000,323.4110) .. controls (394.8830,319.5180) and
+      (396.8910,315.2150) .. (400.7820,313.7980) .. controls (405.9340,311.9230) and
+      (408.6000,306.2060) .. (406.7250,301.0550) .. controls (405.8170,298.5590) and
+      (403.9910,296.5660) .. (401.5830,295.4440) .. controls (399.1760,294.3220) and
+      (396.4760,294.2020) .. (393.9800,295.1120) .. controls (390.0860,296.5260) and
+      (385.7830,294.5200) .. (384.3670,290.6300) .. controls (382.9500,286.7370) and
+      (384.9580,282.4340) .. (388.8490,281.0170) .. controls (395.1120,278.7390) and
+      (401.8840,279.0350) .. (407.9220,281.8500) .. controls (413.9600,284.6660) and
+      (418.5400,289.6640) .. (420.8190,295.9250) .. controls (423.0970,302.1860) and
+      (422.8020,308.9590) .. (419.9860,314.9970) .. controls (417.1700,321.0350) and
+      (412.1720,325.6150) .. (405.9110,327.8940) .. controls (405.0660,328.2000) and
+      (404.2000,328.3470) .. (403.3490,328.3470) -- cycle;
+    \fill[wings,color=gray3,y=-0.1pt, x=-0.1pt] (450.8820,365.1070) .. controls (447.8180,365.1070) and
+      (444.9420,363.2150) .. (443.8330,360.1700) .. controls (442.4160,356.2780) and
+      (444.4240,351.9740) .. (448.3150,350.5570) .. controls (453.4670,348.6820) and
+      (456.1320,342.9650) .. (454.2570,337.8130) .. controls (453.3490,335.3170) and
+      (451.5240,333.3250) .. (449.1160,332.2030) .. controls (446.7090,331.0810) and
+      (444.0090,330.9610) .. (441.5140,331.8710) .. controls (437.6200,333.2840) and
+      (433.3170,331.2790) .. (431.9010,327.3890) .. controls (430.4840,323.4960) and
+      (432.4920,319.1930) .. (436.3830,317.7760) .. controls (442.6460,315.4980) and
+      (449.4180,315.7940) .. (455.4560,318.6090) .. controls (461.4940,321.4250) and
+      (466.0740,326.4240) .. (468.3530,332.6840) .. controls (473.0570,345.6080) and
+      (466.3700,359.9500) .. (453.4460,364.6540) .. controls (452.6000,364.9610) and
+      (451.7330,365.1070) .. (450.8820,365.1070) -- cycle;
+\end{scope}
+}
+
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintlefthorn}{
+  \begin{scope}[y=-0.25pt, x=0.25pt,even odd rule]
+	\pgftransformshift{\pgfpoint{5.3pt}{0.2pt}}
+	\pgftransformscale{0.05}
+    \path[fill=rightHornFill,nonzero rule] (419.6310,17.4520) .. controls
+      (413.3610,15.9690) and (406.8480,18.6520) .. (403.4430,24.1190) .. controls
+      (400.0380,29.5860) and (400.5030,36.6170) .. (404.5990,41.5880) .. controls
+      (415.9830,55.4030) and (422.0000,71.7920) .. (422.0000,88.9800) .. controls
+      (422.0000,112.7900) and (411.0660,134.6610) .. (392.0010,148.9860) .. controls
+      (385.3780,153.9630) and (384.0430,163.3660) .. (389.0200,169.9890) --
+      (427.2920,234.0380) .. controls (431.1300,241.3790) and (440.1930,244.2190) ..
+      (447.5350,240.3800) .. controls (487.2980,219.5880) and (512.0000,178.8180) ..
+      (512.0000,133.9800) .. controls (512.0000,77.7050) and (472.8940,30.0610) ..
+      (419.6310,17.4520) -- cycle;
+  \end{scope}
+}
+
+\newcommand{\tikzcasafanten@casafantshape@paintrighthorn}{
+  \begin{scope}[y=-0.25pt, x=0.25pt,even odd rule]
+	\pgftransformshift{\pgfpoint{6.7pt}{-0.1pt}}
+	\pgftransformscale{0.05}
+    \path[fill=leftHornFill,nonzero rule] (119.9990,148.9860) .. controls
+      (100.9340,134.6610) and (90.0000,112.7900) .. (90.0000,88.9800) .. controls
+      (90.0000,71.7920) and (96.0170,55.4030) .. (107.4010,41.5870) .. controls
+      (111.4970,36.6160) and (111.9630,29.5860) .. (108.5570,24.1180) .. controls
+      (105.1520,18.6510) and (98.6390,15.9680) .. (92.3690,17.4510) .. controls
+      (39.1130,30.0590) and (0.0000,77.6980) .. (0.0000,133.9800) .. controls
+      (0.0000,178.8180) and (24.7020,219.5880) .. (64.4650,240.3800) .. controls
+      (71.8050,244.2190) and (80.8690,241.3790) .. (84.7080,234.0380) --
+      (122.9800,169.9890) .. controls (127.9570,163.3660) and (126.6220,153.9620) ..
+      (119.9990,148.9860) -- cycle;
+  \end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@painttophat}{
+ \begin{scope}[y=-0.10pt, x=0.10pt,even odd rule]
+	\pgftransformshift{\pgfpoint{3.4pt}{2.2pt}}
+	\pgftransformrotate{16}
+	\pgftransformscale{0.13}
+    \path[draw=hatOutline,fill=hatFill,nonzero rule,line width=1pt]
+      (444.8850,374.7200) .. controls (445.2050,384.0850) and (445.9300,392.2990) ..
+      (447.2740,398.5920) .. controls (450.8370,415.1680) and (440.8530,431.6800) ..
+      (424.5110,436.1810) .. controls (421.2040,437.0980) and (342.3560,458.6660) ..
+      (255.9990,458.6660) .. controls (250.1110,458.6660) and (245.3320,453.8870) ..
+      (245.3320,447.9990) .. controls (245.3320,442.1110) and (250.1110,437.3320) ..
+      (255.9990,437.3320) .. controls (339.4980,437.3320) and (415.6150,416.4890) ..
+      (418.8360,415.6150) .. controls (424.2970,414.1220) and (427.6250,408.6180) ..
+      (426.4310,403.0920) .. controls (424.5110,394.2390) and (423.6360,382.4630) ..
+      (423.4440,368.9590) .. controls (423.4230,368.9590) and (423.3800,368.9380) ..
+      (423.3590,368.9380) .. controls (422.0580,284.0950) and (452.0520,125.4390) ..
+      (468.9060,66.9650) .. controls (469.1830,66.0050) and (469.3330,65.0020) ..
+      (469.3330,64.0000) .. controls (469.3330,29.2050) and (345.4290,10.6670) ..
+      (256.0000,10.6670) .. controls (166.5710,10.6670) and (42.6670,29.2050) ..
+      (42.6670,64.0000) .. controls (42.6670,65.0030) and (42.7950,66.0050) ..
+      (43.0940,66.9650) .. controls (59.9690,125.4180) and (89.9420,284.0960) ..
+      (88.6410,368.9170) .. controls (46.4430,378.9230) and (0.0000,396.7360) ..
+      (0.0000,426.6670) .. controls (0.0000,475.6910) and (128.7890,501.3340) ..
+      (256.0000,501.3340) .. controls (383.2110,501.3340) and (512.0000,475.6910) ..
+      (512.0000,426.6670) .. controls (512.0000,401.8130) and (479.9360,385.3230) ..
+      (444.8850,374.7200) -- cycle(152.4910,371.0930) .. controls
+      (152.4060,376.9170) and (147.6270,381.5890) .. (141.8240,381.5890) --
+      (141.6530,381.5890) .. controls (135.7650,381.5040) and (131.0500,376.6610) ..
+      (131.1570,370.7520) .. controls (132.5010,283.7760) and (105.9840,146.0480) ..
+      (91.7760,85.3760) .. controls (90.4320,79.6370) and (93.9950,73.8990) ..
+      (99.7330,72.5550) .. controls (105.4290,71.2110) and (111.2100,74.7740) ..
+      (112.5540,80.5120) .. controls (126.9760,142.0590) and (153.8560,282.0270) ..
+      (152.4910,371.0930) -- cycle;
+\end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintmoustache}{
+  \begin{scope}[y=-0.80pt, x=0.80pt,even odd rule]
+	\pgftransformshift{\pgfpoint{-0.2pt}{5.1pt}}
+	\pgftransformscale{0.063}
+    \path[fill=beardFill,nonzero rule] (210.9310,235.8920) .. controls
+      (210.9310,235.8920) and (212.5770,233.5850) .. (211.6230,231.5070) .. controls
+      (208.9430,225.6590) and (200.0190,230.0340) .. (200.6250,238.0010) .. controls
+      (200.6250,238.0010) and (201.2250,254.5420) .. (224.7780,255.3210) .. controls
+      (230.9180,255.5260) and (239.2500,254.1960) .. (245.9180,246.8350) .. controls
+      (250.5230,241.7510) and (249.2700,232.3920) .. (243.3620,230.2160) .. controls
+      (236.9970,227.8700) and (228.8160,229.5700) .. (222.7090,238.8680) .. controls
+      (216.9060,247.7000) and (205.4600,241.5590) .. (205.6470,235.6630) .. controls
+      (205.8220,230.2090) and (212.1420,232.3420) .. (210.9310,235.8920) -- cycle;
+  \end{scope}
+}
+
+
+
+\newcommand{\tikzcasafanten@casafantshape@paintmonocle}{
+\begin{scope}
+	\pgftransformshift{\pgfpoint{10.4pt}{-3.8pt}}
+	\pgftransformscale{0.04}
+  \begin{scope}[y=-0.1pt, x=0.1pt,even odd rule]
+      \path[fill=monocleFill] (266.6670,0.0160) .. controls (247.8310,0.0160)
+        and (229.8270,3.4560) .. (213.0300,9.4600) .. controls (212.6610,6.4170) and
+        (211.2240,3.5960) .. (208.6460,1.8500) .. controls (205.7080,-0.1400) and
+        (201.9580,-0.5670) .. (198.7080,0.7770) .. controls (196.3750,1.7140) and
+        (141.2290,24.3910) .. (107.7910,91.2430) .. controls (106.1450,94.5450) and
+        (106.3120,98.4720) .. (108.2490,101.6180) .. controls (109.9780,104.3950) and
+        (112.9260,105.9750) .. (116.1150,106.3640) .. controls (110.1080,123.1640) and
+        (106.6660,141.1710) .. (106.6660,160.0120) .. controls (106.6660,178.7820) and
+        (110.0830,196.7270) .. (116.0460,213.4740) .. controls (99.0080,214.1650) and
+        (85.3320,228.1380) .. (85.3320,245.3430) .. controls (85.3320,259.2310) and
+        (94.2760,270.9590) .. (106.6650,275.3770) -- (106.6650,501.3350) .. controls
+        (106.6650,507.2310) and (111.4360,512.0010) .. (117.3320,512.0010) .. controls
+        (123.2280,512.0010) and (127.9990,507.2300) .. (127.9990,501.3350) --
+        (127.9990,275.3760) .. controls (134.6710,272.9970) and (140.3380,268.5530) ..
+        (144.1380,262.7070) .. controls (173.5100,297.6920) and (217.5130,320.0060) ..
+        (266.6650,320.0060) .. controls (354.8940,320.0060) and (426.6650,248.2370) ..
+        (426.6650,160.0110) .. controls (426.6650,71.7850) and (354.8960,0.0160) ..
+        (266.6670,0.0160) -- cycle(117.3330,256.0000) .. controls (111.4580,256.0000)
+        and (106.6660,251.2190) .. (106.6660,245.3330) .. controls (106.6660,239.4480)
+        and (111.4580,234.6660) .. (117.3330,234.6660) .. controls (123.2080,234.6660)
+        and (128.0000,239.4480) .. (128.0000,245.3330) .. controls (128.0000,251.2190)
+        and (123.2080,256.0000) .. (117.3330,256.0000) -- cycle(266.6670,298.6670) ..
+        controls (190.2080,298.6670) and (128.0000,236.4580) .. (128.0000,160.0000) ..
+        controls (128.0000,83.5420) and (190.2080,21.3330) .. (266.6670,21.3330) ..
+        controls (343.1260,21.3330) and (405.3330,83.5420) .. (405.3330,160.0000) ..
+        controls (405.3330,236.4580) and (343.1250,298.6670) .. (266.6670,298.6670) --
+        cycle;
+    \end{scope}
+    \begin{scope}[y=-0.1pt, x=0.1pt,even odd rule]
+      \path[fill=monocleFill,nonzero rule] (266.6670,42.6670) .. controls
+        (201.9790,42.6670) and (149.3340,95.3020) .. (149.3340,160.0000) .. controls
+        (149.3340,165.8960) and (154.1050,170.6670) .. (160.0010,170.6670) .. controls
+        (165.8970,170.6670) and (170.6680,165.8960) .. (170.6680,160.0000) .. controls
+        (170.6680,107.0620) and (213.7310,64.0000) .. (266.6680,64.0000) .. controls
+        (272.5640,64.0000) and (277.3350,59.2290) .. (277.3350,53.3330) .. controls
+        (277.3330,47.4380) and (272.5630,42.6670) .. (266.6670,42.6670) -- cycle;
+    \end{scope}
+\end{scope}
+}
+	
+	
+	
+	
+\newcommand{\tikzcasafanten@casafantshape@paintdetectivehat}{
+\begin{scope}
+	\pgftransformshift{\pgfpoint{14.8pt}{0.9pt}}
+	\pgftransformscale{0.085}
+  \begin{scope}[y=-0.25pt, x=-0.25pt,even odd rule]
+    \path[fill=hatFill1,nonzero rule] (313.5070,22.7630) -- (288.9960,22.6800) --
+      (257.1330,22.5860) .. controls (109.4530,33.9870) and (114.7170,137.2100) ..
+      (114.7170,137.2100) -- (114.7180,137.2100) -- (36.6100,190.5070) .. controls
+      (29.2710,195.5150) and (32.6370,206.9960) .. (41.5190,207.2510) .. controls
+      (181.4240,211.2720) and (223.2880,144.2920) .. (223.2880,144.2910) --
+      (322.9120,148.2790) -- (355.2350,160.6110) -- (369.1950,165.9450) --
+      (416.0220,142.2130) .. controls (416.0230,142.2140) and (455.4040,35.3670) ..
+      (313.5070,22.7630) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.25pt, x=-0.25pt,even odd rule]
+    \path[fill=hatFill2,nonzero rule] (322.9140,148.2840) .. controls
+      (322.9140,148.2840) and (356.8800,202.6300) .. (469.1490,202.4250) .. controls
+      (479.8190,202.4050) and (484.1000,188.6660) .. (475.2860,182.6520) --
+      (416.0200,142.2120) -- (322.9140,148.2840) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.25pt, x=-0.25pt,even odd rule]
+    \path[fill=hatFill2,nonzero rule] (416.0230,142.2140) -- (369.1960,165.9460) --
+      (355.2360,160.6120) .. controls (354.8820,156.7770) and (355.3420,151.9740) ..
+      (356.7820,146.0730) .. controls (373.0560,79.0310) and (309.9440,35.1660) ..
+      (288.9970,22.6800) -- (313.5080,22.7630) .. controls (455.4040,35.3670) and
+      (416.0230,142.2140) .. (416.0230,142.2140) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.25pt, x=-0.25pt,even odd rule]
+    \path[fill=hatFill3,nonzero rule] (223.2870,144.2910) -- (322.9120,148.2840) --
+      (312.7120,12.2250) .. controls (312.1960,5.3300) and (306.4520,0.0000) ..
+      (299.5380,0.0000) -- (273.4500,0.0000) .. controls (267.5160,0.0000) and
+      (262.3110,3.9550) .. (260.7210,9.6720) -- (223.2870,144.2910) -- cycle;
+  \end{scope}
+\end{scope}
+}
+
+
+
+
+
+
+
+
+
+\newcommand{\tikzcasafanten@declareshape}[1]{
+	\input{tikzcasafanten.shape.#1.sty}
+	\pgfdeclareshape{#1}{
+		\inheritsavedanchors[from={casafantshape}]
+		\inheritanchor[from={casafantshape}]{north west}
+		\inheritanchor[from={casafantshape}]{north}
+		\inheritanchor[from={casafantshape}]{north east}
+		\inheritanchor[from={casafantshape}]{east}
+		\inheritanchor[from={casafantshape}]{south east}
+		\inheritanchor[from={casafantshape}]{south}
+		\inheritanchor[from={casafantshape}]{south west}
+		\inheritanchor[from={casafantshape}]{west}
+		\inheritanchor[from={casafantshape}]{center}
+		\inheritanchor[from={casafantshape}]{text}
+		\inheritanchor[from={casafantshape}]{base}
+		\inheritanchor[from={casafantshape}]{base west}
+		\inheritanchor[from={casafantshape}]{base east}
+		\inheritanchor[from={casafantshape}]{mid}
+		\inheritanchor[from={casafantshape}]{mid west}
+		\inheritanchor[from={casafantshape}]{mid east}
+		\inheritanchor[from={casafantshape}]{mouth}
+		\inheritanchorborder[from={casafantshape}]
+	
+		\beforebackgroundpath{
+			\pgftransformscale{\scalingfactor}
+			\if@tikzcasafanten@mirrored
+				\pgftransformxscale{-1}
+				\pgftransformxshift{-0.325}
+			\fi
+			\pgftransformshift{\pgfpoint{-0.3}{3.3}}
+			\tikzcasafanten@definecommoncolors
+			\csname tikzcasafanten@#1@definecolors\endcsname
+			\tikzcasafanten@definecommonstyles
+			\csname tikzcasafanten@#1@definestyles\endcsname
+%TODO
+			\if@tikzcasafanten@trident
+				\tikzcasafanten@casafantshape@painttrident
+			\fi
+			\if@tikzcasafanten@wings
+				\tikzcasafanten@casafantshape@paintleftwing
+			\fi
+			\if@tikzcasafanten@horns
+				\tikzcasafanten@casafantshape@paintlefthorn
+			\fi
+			\begin{scope}
+				\csname tikzcasafanten@#1@paint\endcsname
+			\end{scope}
+			\if@tikzcasafanten@detectivehat
+				\tikzcasafanten@casafantshape@paintdetectivehat
+			\fi
+			\if@tikzcasafanten@tophat
+				\tikzcasafanten@casafantshape@painttophat
+			\fi
+			\if@tikzcasafanten@halo
+				\tikzcasafanten@casafantshape@painthalo
+			\fi
+			\if@tikzcasafanten@monocle
+				\tikzcasafanten@casafantshape@paintmonocle
+			\fi
+			\if@tikzcasafanten@moustache
+				\tikzcasafanten@casafantshape@paintmoustache
+			\fi
+			\if@tikzcasafanten@wings
+				\tikzcasafanten@casafantshape@paintrightwing
+			\fi
+			\if@tikzcasafanten@horns
+				\tikzcasafanten@casafantshape@paintrighthorn
+			\fi
+		}
+	}
+}
+
+
+
+
+\tikzcasafanten@declareshape{casafant}
+\tikzcasafanten@declareshape{casafantina}
+\tikzcasafanten@declareshape{badfant}
+\tikzcasafanten@declareshape{goodfant}
+\tikzcasafanten@declareshape{monoclefant}
+\tikzcasafanten@declareshape{sherlockfant}
+\tikzcasafanten@declareshape{musicfant}
+
+
+
