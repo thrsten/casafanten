@@ -1,0 +1,30 @@
+\newcommand{\tikzcasafanten@casadifant@paint}{
+	\tikzcasafanten@casafantshape@paintskin
+%	\tikzcasafanten@casafantshape@paintdetectivehat
+}
+
+\definecolor{rainbowRed}{RGB}{248,99,89}
+\definecolor{rainbowOrange}{RGB}{247,127,46}
+\definecolor{rainbowYellow}{RGB}{226,184,56}
+\definecolor{rainbowGreen}{RGB}{130,196,119}
+\definecolor{rainbowBlue}{RGB}{87,176,216}
+\definecolor{rainbowPurple}{RGB}{156,130,194}
+\definecolor{rainbowRose}{RGB}{221,112,144}
+
+\pgfdeclarehorizontalshading{rainbow}{100bp}{%
+  color(0bp)=(rainbowRed);
+  color(24bp)=(rainbowRed);
+  color(32bp)=(rainbowOrange);
+  color(42bp)=(rainbowYellow);
+  color(54bp)=(rainbowGreen);
+  color(65bp)=(rainbowBlue);
+  color(75bp)=(rainbowPurple);
+  color(80bp)=(rainbowRose);
+  color(100bp)=(rainbowRose)
+}
+
+\newcommand{\tikzcasafanten@casadifant@definestyles}{
+	\tikzset{
+		skin/.style={shading=rainbow,shading angle=-110}
+	}
+}

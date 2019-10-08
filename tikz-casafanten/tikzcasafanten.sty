@@ -4,6 +4,7 @@
 \RequirePackage{tikz}
 \RequirePackage{calc}
 \RequirePackage{etoolbox}
+\RequirePackage{xparse}
 
 \tikzset{
     shade border west to east/.style args={#1 to #2}{
@@ -24,7 +25,7 @@
 \definecolor{gray2}{RGB}{212,213,213}
 \definecolor{gray3}{RGB}{200,201,201}
 \definecolor{gray4}{RGB}{180,181,181}
-\definecolor{monoclefantskin}{RGB}{62,62,62} %?
+\definecolor{monoclefantskin}{RGB}{62,62,62}
 \definecolor{hatOutline}{RGB}{96,91,88}
 \definecolor{hatFill}{RGB}{46,44,42}
 \definecolor{beardFill}{RGB}{137,136,136}
@@ -35,6 +36,12 @@
 \definecolor{hatFill1}{RGB}{117,112,107}
 \definecolor{hatFill2}{RGB}{96,91,88}
 \definecolor{hatFill3}{RGB}{140,136,132}
+\definecolor{c555558}{RGB}{85,85,88}
+\definecolor{c999999}{RGB}{153,153,153}
+\definecolor{ce6e6e6}{RGB}{230,230,230}
+\definecolor{c54596e}{RGB}{84,89,110}
+
+
 
 \newif\if@tikzcasafanten@nonsaturated\@tikzcasafanten@nonsaturatedfalse
 \DeclareOption{nonsaturated}{
@@ -43,7 +50,11 @@
 
 \ProcessOptions\relax
 \usepgflibrary{intersections}
-\usetikzlibrary{decorations.markings,decorations.pathmorphing,calc,positioning,arrows.meta,fadings,shadows}
+\usetikzlibrary{decorations.markings,decorations.pathmorphing,calc,positioning,arrows.meta,fadings,shadows,shadings}
+
+
+
+
 
 \newif\if@tikzcasafanten@mirrored
 \pgfkeys{/tikz/mirrored/.is if=@tikzcasafanten@mirrored}
@@ -64,9 +75,12 @@
 \pgfkeys{/tikz/monocle/.is if=@tikzcasafanten@monocle}
 \newif\if@tikzcasafanten@detectivehat
 \pgfkeys{/tikz/detectivehat/.is if=@tikzcasafanten@detectivehat}
+\newif\if@tikzcasafanten@headphones
+\pgfkeys{/tikz/headphones/.is if=@tikzcasafanten@headphones}
 
 
 \pgfkeys{/tikz/nonsaturated/.is if=@tikzcasafanten@nonsaturated}
+
 
 
 \newcommand{\tikzcasafanten@addcolorkey}[1]{
@@ -284,6 +298,9 @@
 		\if@tikzcasafanten@moustache
 			\tikzcasafanten@casafantshape@moustache
 		\fi
+		\if@tikzcasafanten@headphones
+			\tikzcasafanten@casafantshape@headphones
+		\fi
 	}
 }
 
@@ -312,46 +329,46 @@
 \newcommand{\tikzcasafanten@casafantshape@paintskin}{
 	\begin{scope}
 		\pgftransformscale{0.9}
-		\fill[skin,y=-0.03pt, x=0.03pt]
+		\path[skin,y=-0.03pt, x=0.03pt]
 		(488.9090,418.3920) .. controls
-		          (454.0690,391.1730) and (485.6430,324.7600) .. (485.6430,324.7600) .. controls
-		          (548.7900,163.6260) and (439.5350,82.4530) .. (420.8550,71.8730) .. controls
-		          (382.8220,50.3320) and (292.3580,29.2250) .. (246.6890,87.1920) .. controls
-		          (233.7730,103.5860) and (238.0900,123.9460) .. (244.0350,138.1760) .. controls
-		          (259.3370,174.7940) and (300.4710,207.7200) .. (335.7280,211.5640) .. controls
-		          (345.7820,212.6870) and (353.1050,210.3820) .. (358.0640,204.6060) .. controls
-		          (373.8250,186.2590) and (365.5150,137.9880) .. (360.9730,120.9340) .. controls
-		          (359.7400,116.2900) and (362.5040,111.5180) .. (367.1570,110.2760) .. controls
-		          (368.4980,109.9200) and (369.8210,109.9760) .. (371.0950,110.2350) .. controls
-		          (374.2370,110.8720) and (376.9370,113.1440) .. (377.8150,116.4600) .. controls
-		          (379.7200,123.6390) and (395.7710,187.4580) .. (371.2830,215.9610) .. controls
-		          (365.8820,222.2470) and (356.2790,229.2470) .. (340.3130,229.2470) .. controls
-		          (338.2630,229.2470) and (336.1030,229.1280) .. (333.8400,228.8810) .. controls
-		          (292.2470,224.3390) and (245.7450,187.4490) .. (227.9600,144.8860) .. controls
-		          (223.4850,134.1780) and (221.2530,123.8210) .. (221.0120,114.0510) .. controls
-		          (121.2840,114.0510) and (7.4370,169.6470) .. (0.0210,269.6480) .. controls
-		          (-0.2170,272.8560) and (1.7560,275.8150) .. (4.8100,276.8270) .. controls
-		          (7.8640,277.8480) and (11.2230,276.6580) .. (12.9500,273.9450) .. controls
-		          (19.0740,264.3290) and (26.7000,253.9180) .. (34.2750,247.3600) .. controls
-		          (35.3620,263.1090) and (40.1460,278.1560) .. (48.4110,291.8920) .. controls
-		          (64.9630,319.4000) and (73.8010,350.9900) .. (73.8010,383.0900) --
-		          (73.9590,442.3430) .. controls (74.8020,449.6040) and (91.9540,455.4080) ..
-		          (113.1400,455.4080) .. controls (134.3340,455.4080) and (151.4860,449.6040) ..
-		          (152.3300,442.3430) -- (152.4880,403.8880) .. controls (152.4880,393.7920) and
-		          (156.6980,384.1460) .. (164.0980,377.2720) .. controls (171.4980,370.3990) and
-		          (181.4140,367.6440) .. (191.5110,367.6440) .. controls (197.7740,367.6440) and
-		          (210.5900,367.6530) .. (211.3390,367.6440) .. controls (221.0270,367.5430) and
-		          (230.3580,371.9810) .. (237.2380,378.8030) .. controls (244.1280,385.6250) and
-		          (247.9990,394.9130) .. (247.9990,404.6020) -- (248.1570,442.3420) .. controls
-		          (249.0000,449.6030) and (266.1510,455.4070) .. (287.3380,455.4070) .. controls
-		          (308.5320,455.4070) and (325.6840,449.6030) .. (326.5280,442.3420) --
-		          (326.6860,409.1270) .. controls (326.6860,310.5280) and (398.9400,266.5290) ..
-		          (407.5250,261.3130) .. controls (450.1310,235.4270) and (431.2050,313.8700) ..
-		          (431.2050,313.8700) .. controls (402.8980,402.0580) and (468.2220,442.3420) ..
-		          (468.2220,442.3420) -- (468.5150,442.0030) .. controls (468.7190,442.2110) and
-		          (468.7770,442.5470) .. (469.0130,442.7250) .. controls (473.1970,445.8800) and
-		          (480.8120,442.8530) .. (486.0080,435.9460) .. controls (490.8000,429.6060) and
-		          (491.6760,422.3820) .. (488.5770,418.7750) -- cycle;
+		(454.0690,391.1730) and (485.6430,324.7600) .. (485.6430,324.7600) .. controls
+		(548.7900,163.6260) and (439.5350,82.4530) .. (420.8550,71.8730) .. controls
+		(382.8220,50.3320) and (292.3580,29.2250) .. (246.6890,87.1920) .. controls
+		(233.7730,103.5860) and (238.0900,123.9460) .. (244.0350,138.1760) .. controls
+		(259.3370,174.7940) and (300.4710,207.7200) .. (335.7280,211.5640) .. controls
+		(345.7820,212.6870) and (353.1050,210.3820) .. (358.0640,204.6060) .. controls
+		(373.8250,186.2590) and (365.5150,137.9880) .. (360.9730,120.9340) .. controls
+		(359.7400,116.2900) and (362.5040,111.5180) .. (367.1570,110.2760) .. controls
+		(368.4980,109.9200) and (369.8210,109.9760) .. (371.0950,110.2350) .. controls
+		(374.2370,110.8720) and (376.9370,113.1440) .. (377.8150,116.4600) .. controls
+		(379.7200,123.6390) and (395.7710,187.4580) .. (371.2830,215.9610) .. controls
+		(365.8820,222.2470) and (356.2790,229.2470) .. (340.3130,229.2470) .. controls
+		(338.2630,229.2470) and (336.1030,229.1280) .. (333.8400,228.8810) .. controls
+		(292.2470,224.3390) and (245.7450,187.4490) .. (227.9600,144.8860) .. controls
+		(223.4850,134.1780) and (221.2530,123.8210) .. (221.0120,114.0510) .. controls
+		(121.2840,114.0510) and (7.4370,169.6470) .. (0.0210,269.6480) .. controls
+		(-0.2170,272.8560) and (1.7560,275.8150) .. (4.8100,276.8270) .. controls
+		(7.8640,277.8480) and (11.2230,276.6580) .. (12.9500,273.9450) .. controls
+		(19.0740,264.3290) and (26.7000,253.9180) .. (34.2750,247.3600) .. controls
+		(35.3620,263.1090) and (40.1460,278.1560) .. (48.4110,291.8920) .. controls
+		(64.9630,319.4000) and (73.8010,350.9900) .. (73.8010,383.0900) --
+		(73.9590,442.3430) .. controls (74.8020,449.6040) and (91.9540,455.4080) ..
+		(113.1400,455.4080) .. controls (134.3340,455.4080) and (151.4860,449.6040) ..
+		(152.3300,442.3430) -- (152.4880,403.8880) .. controls (152.4880,393.7920) and
+		(156.6980,384.1460) .. (164.0980,377.2720) .. controls (171.4980,370.3990) and
+		(181.4140,367.6440) .. (191.5110,367.6440) .. controls (197.7740,367.6440) and
+		(210.5900,367.6530) .. (211.3390,367.6440) .. controls (221.0270,367.5430) and
+		(230.3580,371.9810) .. (237.2380,378.8030) .. controls (244.1280,385.6250) and
+		(247.9990,394.9130) .. (247.9990,404.6020) -- (248.1570,442.3420) .. controls
+		(249.0000,449.6030) and (266.1510,455.4070) .. (287.3380,455.4070) .. controls
+		(308.5320,455.4070) and (325.6840,449.6030) .. (326.5280,442.3420) --
+		(326.6860,409.1270) .. controls (326.6860,310.5280) and (398.9400,266.5290) ..
+		(407.5250,261.3130) .. controls (450.1310,235.4270) and (431.2050,313.8700) ..
+		(431.2050,313.8700) .. controls (402.8980,402.0580) and (468.2220,442.3420) ..
+		(468.2220,442.3420) -- (468.5150,442.0030) .. controls (468.7190,442.2110) and
+		(468.7770,442.5470) .. (469.0130,442.7250) .. controls (473.1970,445.8800) and
+		(480.8120,442.8530) .. (486.0080,435.9460) .. controls (490.8000,429.6060) and
+		(491.6760,422.3820) .. (488.5770,418.7750) -- cycle;
 \end{scope}
 }
 
@@ -801,8 +818,201 @@
 }
 
 
+\newcommand{\tikzcasafanten@casafantshape@paintheadphonesFront}{
+\begin{scope}
+	\pgftransformscale{0.3}
+	\pgftransformshift{\pgfpoint{-381.6}{93.3}}
+\begin{scope}
+  \begin{scope}[y=-0.20pt, x=-0.20pt,even odd rule]
+	\pgftransformshift{\pgfpoint{413.6}{-70.5}}
+    \path[fill=c999999,nonzero rule] (16.2350,191.4220) -- (16.5300,191.4220) ..
+      controls (21.0410,191.4220) and (24.6990,187.7650) .. (24.6990,183.2550) --
+      (24.6990,158.0060) .. controls (24.6990,153.4960) and (21.0410,149.8380) ..
+      (16.5300,149.8380) -- (16.2350,149.8380) .. controls (11.7220,149.8380) and
+      (8.0660,153.4960) .. (8.0660,158.0060) -- (8.0660,183.2550) .. controls
+      (8.0660,187.7650) and (11.7220,191.4220) .. (16.2350,191.4220) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.20pt, x=-0.20pt,even odd rule]
+	\pgftransformshift{\pgfpoint{413.6}{-70.5}}
+    \path[fill=c555558,nonzero rule] (16.2350,191.4230) -- (16.2350,194.1940) --
+      (16.5300,194.1940) .. controls (22.5740,194.1930) and (27.4690,189.2970) ..
+      (27.4710,183.2550) -- (27.4710,158.0060) .. controls (27.4690,151.9640) and
+      (22.5740,147.0690) .. (16.5300,147.0670) -- (16.2350,147.0670) .. controls
+      (10.1910,147.0690) and (5.2960,151.9640) .. (5.2930,158.0060) --
+      (5.2930,183.2550) .. controls (5.2960,189.2970) and (10.1910,194.1930) ..
+      (16.2350,194.1940) -- (16.2350,188.6500) .. controls (13.2540,188.6450) and
+      (10.8430,186.2320) .. (10.8370,183.2550) -- (10.8370,158.0060) .. controls
+      (10.8430,155.0290) and (13.2540,152.6160) .. (16.2350,152.6120) --
+      (16.5300,152.6120) .. controls (19.5090,152.6160) and (21.9220,155.0290) ..
+      (21.9270,158.0060) -- (21.9270,183.2550) .. controls (21.9220,186.2320) and
+      (19.5090,188.6450) .. (16.5300,188.6500) -- (16.2350,188.6500) --
+      (16.2350,191.4230) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.10pt, x=-0.088pt,line cap=round,even odd rule]
+ 	\pgftransformshift{\pgfpoint{454.7}{-90.5}}
+    \path[draw=c555558,nonzero rule,line width=1.90pt] (503.0210,181.0230) ..
+      controls (503.0210,182.6660) and (502.8040,227.4710) .. (502.4270,230.8610) ..
+      controls (497.3590,276.3390) and (495.2550,283.7830) .. (460.0070,285.7140) ..
+      controls (444.7240,286.5510) and (408.5980,287.5700) .. (397.5350,293.9260) ..
+      controls (385.5140,300.8310) and (388.9390,311.2680) .. (389.3990,320.3040);
+  \end{scope}
+	\begin{scope}[y=0.09pt, x=0.03pt,even odd rule]
+ 	\pgftransformshift{\pgfpoint{409.7}{-137.5}}
+    \path[draw=c555558,nonzero rule,line width=1.0pt,fill=c555558]
+     (169.5590,446.5660) ..
+      controls (122.563,447.0830) and (74.698,445.4010) .. (47.302,430.5420) ..
+      controls (46.842,430.3430) and (46.388,430.1430) .. (45.940,429.9400) ..
+      controls (32.473,424.8560) and (24.302,416.2000) .. (24.164,415.9770)
+      -- (23.141,415.9770)
+      .. controls (24.302,425.2000) and (32.473,432.8560) .. (45.940,438.9400) .. 
+      controls (46.388,439.1430) and (46.842,439.3430) .. (47.302,439.5420) .. 
+      controls (74.698,451.4010) and (122.563,457.0830) .. (169.5590,456.5660) -- cycle;
+\end{scope}
+\end{scope}
+\begin{scope}%Ipod
+  \begin{scope}[y=0.20pt,x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{727.5}{-190}}
+    \path[fill=ce6e6e6] (1547.6200,303.0910) .. controls (1547.6200,302.7180) and
+      (1547.3200,302.4140) .. (1546.9400,302.4140) -- (1523.2000,302.4140) ..
+      controls (1522.8300,302.4140) and (1522.5300,302.7180) .. (1522.5300,303.0910)
+      -- (1522.5300,338.0980) .. controls (1522.5300,338.4720) and
+      (1522.8300,338.7750) .. (1523.2000,338.7750) -- (1546.9400,338.7750) ..
+      controls (1547.3200,338.7750) and (1547.6200,338.4720) .. (1547.6200,338.0980)
+      -- (1547.6200,303.0910) -- cycle;
+  \end{scope}
+  \begin{scope}[y=0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{456.9}{-145.75}}
+    \path[fill=c555558,nonzero rule] (173.5720,113.0480) -- (189.6800,113.0480) ..
+      controls (190.3160,113.0480) and (190.8310,112.5330) .. (190.8310,111.8970) --
+      (190.8310,98.0900) .. controls (190.8310,97.4550) and (190.3160,96.9400) ..
+      (189.6800,96.9400) -- (173.5720,96.9400) .. controls (172.9370,96.9400) and
+      (172.4210,97.4550) .. (172.4210,98.0900) -- (172.4210,111.8970) .. controls
+      (172.4210,112.5330) and (172.9370,113.0480) .. (173.5720,113.0480) --
+      cycle(174.7230,99.2410) -- (188.5290,99.2410) -- (188.5290,110.7470) --
+      (174.7230,110.7470) -- (174.7230,99.2410) -- cycle;
+  \end{scope}
+  \begin{scope}[y=0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{456.9}{-145.75}}
+    \path[fill=c555558,nonzero rule] (181.6260,83.1330) .. controls
+      (178.4490,83.1330) and (175.8730,85.7090) .. (175.8730,88.8860) .. controls
+      (175.8730,92.0630) and (178.4490,94.6390) .. (181.6260,94.6390) .. controls
+      (184.8030,94.6390) and (187.3790,92.0630) .. (187.3790,88.8860) .. controls
+      (187.3750,85.7100) and (184.8020,83.1380) .. (181.6260,83.1330) --
+      cycle(181.6260,92.3380) .. controls (179.7200,92.3380) and (178.1740,90.7920)
+      .. (178.1740,88.8860) .. controls (178.1740,86.9800) and (179.7200,85.4350) ..
+      (181.6260,85.4350) .. controls (183.5330,85.4350) and (185.0780,86.9800) ..
+      (185.0780,88.8860) .. controls (185.0780,90.7920) and (183.5330,92.3380) ..
+      (181.6260,92.3380) -- cycle;
+  \end{scope}
+  \begin{scope}[y=0.092pt, x=-0.092pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{456.52}{-145.45}}
+    \path[draw=c54596e,fill=c555558,line cap=butt,nonzero rule,line width=0.500pt]
+      (380.2360,168.6790) -- (375.2930,168.6790) -- (367.8790,168.6790) .. controls
+      (363.7850,168.6790) and (360.4650,171.9990) .. (360.4650,176.0930) --
+      (360.4650,245.2910) .. controls (360.4650,249.3850) and (363.7850,252.7050) ..
+      (367.8790,252.7050) -- (412.3630,252.7050) .. controls (416.4590,252.7050) and
+      (419.7770,249.3850) .. (419.7770,245.2910) -- (419.7770,176.0930) .. controls
+      (419.7770,171.9990) and (416.4590,168.6790) .. (412.3630,168.6790) --
+      (380.2360,168.6790) -- cycle(414.8340,176.0930) -- (414.8340,245.2910) ..
+      controls (414.8340,246.6560) and (413.7290,247.7620) .. (412.3630,247.7620) --
+      (367.8790,247.7620) .. controls (366.5140,247.7620) and (365.4080,246.6560) ..
+      (365.4080,245.2910) -- (365.4080,176.0930) .. controls (365.4080,174.7290) and
+      (366.5140,173.6220) .. (367.8790,173.6220) -- (412.3630,173.6220) .. controls
+      (413.7290,173.6220) and (414.8340,174.7290) .. (414.8340,176.0930) -- cycle;
+  \end{scope}
+  \begin{scope}[y=0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{460.38}{-114.15}}
+  	\pgftransformrotate{45}
+    \path[fill=c555558,rounded corners=0.0000cm] (176.3100,105.5700) rectangle
+      (181.1920,107.8700);
+  \end{scope}
+  \begin{scope}[y=0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{461.8}{-113.68}}
+  	\pgftransformrotate{45}
+    \path[fill=c555558,rounded corners=0.0000cm] (182.0620,102.1180) rectangle
+      (186.9440,104.4190);
+  \end{scope}
+\end{scope}
+\end{scope}
+}
 
+%TODO sollten beim spiegeln gleich bleiben
+\newcommand{\tikzcasafanten@casafantshape@paintnotes}{
+\begin{scope}%Musiknoten
+	\pgftransformscale{0.3}
+	\pgftransformshift{\pgfpoint{-381.6}{93.3}}
+  \begin{scope}[y=-0.20pt, x=0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{383.5}{-99.4}}
+    \path[fill=c555558,nonzero rule] (159.2510,116.9950) -- (160.2800,119.0540) --
+      (163.2170,117.5850) -- (163.2170,109.7170) -- (155.1630,111.3280) --
+      (155.1630,117.3130) -- (153.4990,118.1460) -- (154.5270,120.2050) --
+      (157.4640,118.7360) -- (157.4640,113.2150) -- (160.9160,112.5250) --
+      (160.9160,116.1630) -- (159.2510,116.9950) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.20pt, x=0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{385.6}{-100.5}}
+    \path[fill=c555558,nonzero rule] (207.7050,105.2750) -- (205.7720,107.9300) --
+      (207.8910,112.0160) -- (206.7960,113.5220) -- (208.6560,114.8750) --
+      (210.5880,112.2190) -- (208.4700,108.1330) -- (209.5650,106.6270) --
+      (207.7050,105.2750) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.20pt, x=0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{385.5}{-102}}
+    \path[fill=c555558,nonzero rule] (199.4460,110.6010) -- (202.3120,108.9980) --
+      (202.1010,104.4000) -- (203.7260,103.4920) -- (202.6030,101.4840) --
+      (199.7370,103.0860) -- (199.9480,107.6840) -- (198.3240,108.5920) --
+      (199.4460,110.6010) -- cycle;
+  \end{scope}
+\end{scope}
+}
 
+\newcommand{\tikzcasafanten@casafantshape@paintnotesMirrored}{
+\begin{scope}%Musiknoten
+	\pgftransformscale{0.3}
+	\pgftransformshift{\pgfpoint{-308}{93.3}}
+  \begin{scope}[y=-0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{383.2}{-99.4}}
+    \path[fill=c555558,nonzero rule] (159.2510,116.9950) -- (160.2800,119.0540) --
+      (163.2170,117.5850) -- (163.2170,109.7170) -- (155.1630,111.3280) --
+      (155.1630,117.3130) -- (153.4990,118.1460) -- (154.5270,120.2050) --
+      (157.4640,118.7360) -- (157.4640,113.2150) -- (160.9160,112.5250) --
+      (160.9160,116.1630) -- (159.2510,116.9950) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{382.8}{-100.5}}
+    \path[fill=c555558,nonzero rule] (207.7050,105.2750) -- (205.7720,107.9300) --
+      (207.8910,112.0160) -- (206.7960,113.5220) -- (208.6560,114.8750) --
+      (210.5880,112.2190) -- (208.4700,108.1330) -- (209.5650,106.6270) --
+      (207.7050,105.2750) -- cycle;
+  \end{scope}
+  \begin{scope}[y=-0.20pt, x=-0.20pt,even odd rule]
+  	\pgftransformshift{\pgfpoint{382.7}{-102}}
+    \path[fill=c555558,nonzero rule] (199.4460,110.6010) -- (202.3120,108.9980) --
+      (202.1010,104.4000) -- (203.7260,103.4920) -- (202.6030,101.4840) --
+      (199.7370,103.0860) -- (199.9480,107.6840) -- (198.3240,108.5920) --
+      (199.4460,110.6010) -- cycle;
+  \end{scope}
+\end{scope}
+}
+
+\newcommand{\tikzcasafanten@casafantshape@paintheadphonesBack}{
+\begin{scope}
+	\pgftransformscale{0.3}
+	\pgftransformshift{\pgfpoint{-381.6}{93.3}}
+\begin{scope}[y=0.09pt, x=0.03pt,even odd rule]
+ 	\pgftransformshift{\pgfpoint{409.7}{-137.5}}
+    \path[draw=c555558,nonzero rule,line width=1.0pt,fill=c555558]
+     (169.5590,446.5660) ..
+      controls (216.5550,447.0830) and (264.4200,445.4010) .. (291.8160,430.5420) ..
+      controls (292.2760,430.3430) and (292.7300,430.1430) .. (293.1780,429.9400) ..
+      controls (306.6450,424.8560) and (314.8160,416.2000) .. (314.9540,415.9770)
+      -- (315.9540,415.9770)
+      .. controls (314.8160,425.2000) and (306.6450,432.8560) .. (293.1780,438.9400) .. 
+      controls (292.7300,439.1430) and (292.2760,439.3430) .. (291.8160,439.5420) .. 
+      controls (264.4200,451.4010) and (216.5550,457.0830) .. (169.5590,456.5660) -- cycle;
+\end{scope}
+\end{scope}
+}
 
 
 
@@ -852,6 +1062,9 @@
 			\if@tikzcasafanten@horns
 				\tikzcasafanten@casafantshape@paintlefthorn
 			\fi
+			\if@tikzcasafanten@headphones
+				\tikzcasafanten@casafantshape@paintheadphonesBack
+			\fi
 			\begin{scope}
 				\csname tikzcasafanten@#1@paint\endcsname
 			\end{scope}
@@ -876,6 +1089,16 @@
 			\if@tikzcasafanten@horns
 				\tikzcasafanten@casafantshape@paintrighthorn
 			\fi
+			\if@tikzcasafanten@headphones
+				\tikzcasafanten@casafantshape@paintheadphonesFront
+			\fi
+			\if@tikzcasafanten@headphones
+				\if@tikzcasafanten@mirrored
+					\tikzcasafanten@casafantshape@paintnotesMirrored
+				\else
+					\tikzcasafanten@casafantshape@paintnotes
+				\fi
+			\fi
 		}
 	}
 }
@@ -890,6 +1113,7 @@
 \tikzcasafanten@declareshape{monoclefant}
 \tikzcasafanten@declareshape{sherlockfant}
 \tikzcasafanten@declareshape{musicfant}
+\tikzcasafanten@declareshape{casadifant}
 
 
 
